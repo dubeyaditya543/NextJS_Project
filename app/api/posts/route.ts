@@ -73,3 +73,46 @@ export async function POST(request: NextRequest) {
     return errorResponse("Something went wrong", 500);
   }
 }
+
+export async function GET(request: NextRequest) {
+  try {
+    const authUser = getAuthUser(request);
+    if (!authUser.userId) {
+      return errorResponse("You must be logged", 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    const page = Math.max(1, Number(searchParams.get("page") || 1));
+    const limit = Math.min(
+      50,
+      Math.max(1, Number(searchParams.get("limit")) || 20),
+    );
+    const skip = (page - 1) * limit;
+
+    await connectDB();
+
+    const [posts, totalCount] = await Promise.all([
+      Post.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("author", "username displayName avatarUrl")
+        .lean(),
+      Post.countDocuments(),
+    ]);
+
+    return successResponse({
+      posts,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        hasMore: skip + posts.length < totalCount
+      }
+    })
+  } catch (error) {
+    console.error("Fetch request error", error)
+    return errorResponse("Something went wrong", 500)
+  }
+}
