@@ -77,9 +77,6 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const authUser = getAuthUser(request);
-    if (!authUser.userId) {
-      return errorResponse("You must be logged", 401);
-    }
 
     const { searchParams } = new URL(request.url);
     const page = Math.max(1, Number(searchParams.get("page") || 1));
@@ -108,11 +105,14 @@ export async function GET(request: NextRequest) {
         limit,
         totalCount,
         totalPages: Math.ceil(totalCount / limit),
-        hasMore: skip + posts.length < totalCount
-      }
-    })
+        hasMore: skip + posts.length < totalCount,
+      },
+    });
   } catch (error) {
-    console.error("Fetch request error", error)
-    return errorResponse("Something went wrong", 500)
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return errorResponse("You must be logged in", 401);
+    }
+    console.error("Fetch request error", error);
+    return errorResponse("Something went wrong", 500);
   }
 }

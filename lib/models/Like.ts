@@ -21,4 +21,4 @@ const likeSchema = new Schema<ILike>({
 
 likeSchema.index({user: 1, post: 1}, {unique: true})
 
-export const Post: Model<ILike> = models.Like|| model<ILike>("Like", likeSchema)
+export const Like: Model<ILike> = models.Like|| model<ILike>("Like", likeSchema)
