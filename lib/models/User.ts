@@ -11,6 +11,8 @@ export interface IUser extends Document {
   avatarPublicId: string;
   createdAt: Date;
   updatedAt: Date;
+  followerCount: number;
+  followingCount: number;
 }
 
 const userSchema = new Schema<IUser>(
@@ -62,6 +64,16 @@ const userSchema = new Schema<IUser>(
       type: String,
       default: "",
     },
+    followerCount: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+    followingCount: {
+      type: Number,
+      default: 0,
+      min: 0
+    }
   },
   { timestamps: true },
 );

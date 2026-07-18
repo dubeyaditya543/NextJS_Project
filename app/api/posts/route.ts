@@ -6,7 +6,11 @@ import { uploadImage } from "@/lib/upload-image";
 import { NextRequest } from "next/server";
 import z from "zod";
 
-const contentScheam = z
+interface Params {
+  params: Promise<{ id: string }>;
+}
+
+const contentSchema = z
   .string()
   .trim()
   .min(1, "Post cannot be empty")
@@ -29,7 +33,7 @@ export async function POST(request: NextRequest) {
     const content = formData.get("content");
     const image = formData.get("image");
 
-    const parsedContent = contentScheam.safeParse(content);
+    const parsedContent = contentSchema.safeParse(content);
     if (!parsedContent.success) {
       return errorResponse(parsedContent.error.issues[0].message, 422);
     }
@@ -114,5 +118,51 @@ export async function GET(request: NextRequest) {
     }
     console.error("Fetch request error", error);
     return errorResponse("Something went wrong", 500);
+  }
+}
+
+export async function PATCH(request: NextRequest, { params }: Params) {
+  try {
+    const authUser = getAuthUser(request);
+    const { id: postId } = await params;
+    const body = await request.json();
+
+    const parsedContent = contentSchema.safeParse(body.content);
+    if (!parsedContent.success) {
+      return errorResponse(parsedContent.error.issues[0].message, 422);
+    }
+
+    
+    await connectDB();
+    
+    const post = await Post.findById(postId);
+    
+    if (!post) {
+      return errorResponse("Post not found", 404);
+    }
+    
+    if (post.author.toString() !== authUser.userId) {
+      return errorResponse("Forbidden", 403);
+    }
+
+    if(parsedContent.data === post.content){
+      return
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      postId,
+      {
+        content: parsedContent.data,
+      },
+      { new: true },
+    ).populate("author", "username displayName avatarUrl");
+
+    return successResponse({ post: updatedPost }, 200);
+  } catch (error) {
+    if(error instanceof Error && error.message === "UNAUTHORIZED"){
+      return errorResponse("Unauthorized", 401)
+    }
+    console.error("Error updating post", error)
+    return errorResponse("Something went wrong", 500)
   }
 }
