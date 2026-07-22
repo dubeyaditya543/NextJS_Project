@@ -1,11 +1,13 @@
 "use client";
 
+import { registerAuthCallback } from "@/lib/authFetch";
 import { AuthUser } from "@/lib/types";
 import {
   createContext,
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
@@ -27,12 +29,40 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const setAuth = useCallback((newUser: AuthUser, newAccessToken: string) => {
     setUser(newUser);
     setAccessToken(newAccessToken);
+    setIsLoading(false);
   }, []);
 
   const clearAuth = useCallback(() => {
     setUser(null);
     setAccessToken(null);
+    setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    registerAuthCallback(
+      (token, incomingUser) => setAuth(incomingUser, token),
+      clearAuth,
+    );
+  }, [setAuth, clearAuth]);
+
+  useEffect(() => {
+    async function checkSession() {
+      const res = await fetch("/api/auth/refresh", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        clearAuth();
+        return;
+      }
+
+      const json = await res.json();
+      setAuth(json.data.user, json.data.accessToken);
+    }
+
+    checkSession();
+  }, [clearAuth, setAuth]);
 
   return (
     <AuthContext.Provider

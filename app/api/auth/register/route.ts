@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
-import { registerSchema } from "./register.schema";
 import { errorResponse, successResponse } from "@/lib/api/api";
 import { connectDB } from "@/lib/db";
 import { User } from "@/lib/models/User";
 import { signAccessToken, signRefreshToken } from "@/lib/jwt";
 import { env } from "@/lib/env";
+import { registerSchema } from "@/lib/validations/auth";
 
 export async function POST(request: NextRequest){
   try{
