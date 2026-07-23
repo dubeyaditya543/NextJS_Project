@@ -32,7 +32,7 @@ export default function LoginPage() {
     },
   });
 
-  async function onSubmit(values: LoginFormValues) {
+  async function onLoginFormSubmit(values: LoginFormValues) {
     setServerError(null);
 
     try {
@@ -60,20 +60,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black px-4 font-bold">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 font-bold">
       <div className="w-full max-w-sm space-y-6">
         <div className="flex flex-col items-center gap-2 text-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-500 text-lg font-bold text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-500 text-lg font-bold text-foreground">
             C
           </div>
-          <h1 className="text-xl font-semibold tracking-tight text-white">
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">
             Welcome back to Chirp
           </h1>
         </div>
 
-        <Card className="border-neutral-800 bg-neutral-950">
+        <Card className="border-border bg-card">
           <CardHeader>
-            <CardTitle className="text-white font-bold">Log in</CardTitle>
+            <CardTitle className="text-foreground font-bold">Log in</CardTitle>
             <CardDescription>
               Enter your credentials to continue.
             </CardDescription>
@@ -89,7 +89,10 @@ export default function LoginPage() {
               </p>
             )}
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 text-white font-bold">
+            <form
+              onSubmit={form.handleSubmit(onLoginFormSubmit)}
+              className="space-y-4 text-foreground font-bold"
+            >
               <Controller
                 name="identifier"
                 control={form.control}
@@ -105,7 +108,7 @@ export default function LoginPage() {
                       aria-invalid={fieldState.invalid}
                       placeholder="Enter email or username"
                       autoComplete="username"
-                      className="border-2 outline-none border-white rounded-sm py-2 px-2"
+                      className="border-2 border-stone-500 rounded-sm py-2 px-2"
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -119,7 +122,9 @@ export default function LoginPage() {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name} className="font-bold">Password</FieldLabel>
+                    <FieldLabel htmlFor={field.name} className="font-bold">
+                      Password
+                    </FieldLabel>
 
                     <Input
                       {...field}
@@ -128,7 +133,7 @@ export default function LoginPage() {
                       aria-invalid={fieldState.invalid}
                       autoComplete={"current-password"}
                       type="password"
-                      className="border-2 outline-none border-white rounded-sm py-2 px-2"
+                      className="border-2 border-stone-500 rounded-sm py-2 px-2"
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -147,8 +152,8 @@ export default function LoginPage() {
             </form>
           </CardContent>
 
-          <CardFooter className="justify-center border-t border-neutral-800 pt-4">
-            <p className="text-sm text-neutral-400">
+          <CardFooter className="justify-center border-t border-border pt-4">
+            <p className="text-sm text-muted-foreground">
               Don&apos;t have an account?{" "}
               <Link
                 href="/register"
