@@ -19,7 +19,7 @@ interface PostCardProps {
   };
 }
 
-function formatRelativeTime(dateString: string): string {
+export function formatRelativeTime(dateString: string): string {
   const diffMs = Date.now() - new Date(dateString).getTime();
   const diffMins = Math.floor(diffMs / 60000);
 

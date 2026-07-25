@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import AuthProvider from "@/context/AuthContext";
 import { ThemeProvider } from "@/components/web/ThemeProvider";
+import NavBar from "@/components/web/NavBar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -47,7 +48,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <NavBar />
+            {children}
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

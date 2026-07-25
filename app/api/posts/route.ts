@@ -3,18 +3,12 @@ import { connectDB } from "@/lib/db";
 import { Post } from "@/lib/models/Post";
 import { getAuthUser } from "@/lib/protect";
 import { uploadImage } from "@/lib/upload-image";
+import { createPostSchema } from "@/lib/validations/post";
 import { NextRequest } from "next/server";
-import z from "zod";
 
 interface Params {
   params: Promise<{ id: string }>;
 }
-
-const contentSchema = z
-  .string()
-  .trim()
-  .min(1, "Post cannot be empty")
-  .max(250, "Post cannot exceed 250 char long");
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = [
@@ -33,7 +27,7 @@ export async function POST(request: NextRequest) {
     const content = formData.get("content");
     const image = formData.get("image");
 
-    const parsedContent = contentSchema.safeParse(content);
+    const parsedContent = createPostSchema.safeParse(content);
     if (!parsedContent.success) {
       return errorResponse(parsedContent.error.issues[0].message, 422);
     }
@@ -57,7 +51,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const post = await Post.create({
-      content: parsedContent.data,
+      content: parsedContent.data.content,
       author: authUser.userId,
       imageUrl,
       imagePublicId,
@@ -127,7 +121,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     const { id: postId } = await params;
     const body = await request.json();
 
-    const parsedContent = contentSchema.safeParse(body.content);
+    const parsedContent = createPostSchema.safeParse(body.content);
     if (!parsedContent.success) {
       return errorResponse(parsedContent.error.issues[0].message, 422);
     }
@@ -145,7 +139,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       return errorResponse("Forbidden", 403);
     }
 
-    if(parsedContent.data === post.content){
+    if(parsedContent.data.content === post.content){
       return
     }
 

@@ -16,7 +16,6 @@ export default async function HomePage() {
     <main className="mx-auto min-h-screen w-full max-w-2xl border-x border-border bg-background">
       <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur">
         <h1 className="text-xl font-bold text-foreground">Home</h1>
-        <ThemeToggle />
       </div>
 
       {posts.length === 0 ? (
