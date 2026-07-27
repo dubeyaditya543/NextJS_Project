@@ -1,5 +1,5 @@
+import CreatePostForm from "@/components/web/CreatePostForm";
 import PostCard from "@/components/web/PostCard";
-import { ThemeToggle } from "@/components/web/ThemeToggle";
 import { connectDB } from "@/lib/db";
 import { Post } from "@/lib/models/Post";
 
@@ -17,6 +17,8 @@ export default async function HomePage() {
       <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur">
         <h1 className="text-xl font-bold text-foreground">Home</h1>
       </div>
+
+      <CreatePostForm />
 
       {posts.length === 0 ? (
         <div className="flex flex-col items-center gap-2 px-4 py-16 text-center">

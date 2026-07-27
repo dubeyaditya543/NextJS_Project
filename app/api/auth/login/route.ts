@@ -52,6 +52,8 @@ export async function POST(request: NextRequest) {
       secure: env.NODE_ENV === "production",
       sameSite: "lax"
     })
+
+    return response
   }catch(error){
     console.error("Login error", error)
     return errorResponse("Something went wrong", 500)

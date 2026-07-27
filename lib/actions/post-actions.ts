@@ -1,10 +1,10 @@
 "use server";
 
-import { uploadImage } from "./upload-image";
-import { connectDB } from "./db";
-import { Post } from "./models/Post";
+import { uploadImage } from "../upload-image";
+import { connectDB } from "../db";
+import { Post } from "../models/Post";
 import { revalidatePath } from "next/cache";
-import { createPostSchema } from "./validations/post";
+import { createPostSchema } from "../validations/post";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];

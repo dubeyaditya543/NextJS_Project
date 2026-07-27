@@ -1,10 +1,12 @@
+"use client";
+
 import { useAuth } from "@/context/AuthContext";
-import { createPostAction } from "@/lib/post-actions";
+import { createPostAction } from "@/lib/actions/post-actions";
 import { CreatePostFormValues, createPostSchema } from "@/lib/validations/post";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChangeEvent, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Field, FieldError, FieldLabel } from "../ui/field";
+import { Field, FieldError } from "../ui/field";
 import { Textarea } from "../ui/textarea";
 import Image from "next/image";
 import { Button } from "../ui/button";

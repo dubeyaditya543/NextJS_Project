@@ -1,3 +1,5 @@
+import CommentCard from "@/components/web/CommentCard";
+import CreateCommentForm from "@/components/web/CreateCommentForm";
 import PostCard from "@/components/web/PostCard";
 import { connectDB } from "@/lib/db";
 import { Comment } from "@/lib/models/Comment";
