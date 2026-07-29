@@ -64,6 +64,7 @@ export default function LikeButton({
   return (
     <Button
       aria-pressed={liked}
+      suppressHydrationWarning={true}
       aria-label={liked ? "Unlike" : "Like"}
       onClick={handleClick}
       className={`flex items-center gap-1.5 text-sm transition-colors ${

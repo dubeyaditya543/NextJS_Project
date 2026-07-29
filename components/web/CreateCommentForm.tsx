@@ -24,7 +24,7 @@ export default function CreateCommentForm({ postId }: CreateCommentProps) {
   const form = useForm<CreateCommentFormValues>({
     resolver: zodResolver(createCommentSchema as any),
     defaultValues: {
-      content: "",
+      content: ""
     },
   });
 

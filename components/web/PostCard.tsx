@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import LikeButton from "./LikeButton";
+import DeletePostButton from "@/components/web/DeletePostButton";
 
 interface PostCardProps {
   post: {
@@ -30,7 +31,6 @@ export function formatRelativeTime(dateString: string): string {
   const diffDays = Math.floor(diffHours / 24);
   return `${diffDays}d`;
 }
-
 export default function PostCard({ post }: PostCardProps) {
   return (
     <article className="flex gap-3 px-4 py-3 transition-colors hover:bg-card">
@@ -104,6 +104,7 @@ export default function PostCard({ post }: PostCardProps) {
             </svg>
             {post.commentCount}
           </Link>
+        <DeletePostButton postId={post._id} author={post.author._id} />
         </div>
       </div>
     </article>

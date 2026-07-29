@@ -1,10 +1,11 @@
 "use server";
 
-import { uploadImage } from "../upload-image";
+import { deleteImage, uploadImage } from "../upload-image";
 import { connectDB } from "../db";
 import { Post } from "../models/Post";
 import { revalidatePath } from "next/cache";
 import { createPostSchema } from "../validations/post";
+import { verifyAccessToken } from "@/lib/jwt";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
@@ -32,7 +33,7 @@ export async function createPostAction(
   }
 
   const content = formData.get("content");
-  const parsed = createPostSchema.safeParse(content);
+  const parsed = createPostSchema.safeParse({ content });
 
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0].message };
@@ -79,4 +80,44 @@ export async function createPostAction(
 
   revalidatePath("/");
   return { success: true };
+}
+
+export async function deletePostAction(
+  accessToken: string | null,
+  postId: string,
+): Promise<{ success: boolean; error?: string }> {
+  if (!accessToken) {
+    return {success: false, error: "Please log in"}
+  }
+
+  let authUser;
+  try {
+    authUser = verifyAccessToken(accessToken)
+  } catch {
+    return {success: false, error: "Your session is expired. Please log in"}
+  }
+
+  try {
+    await connectDB()
+
+    const post = await Post.findById(postId)
+    if (!post) {
+      return {success: false, error: "Post not found"}
+    }
+
+    if (post.author.toString() !== authUser.userId) {
+      return { success: false, error: "Unauthorized"}
+    }
+
+    if (post.imagePublicId) {
+      await deleteImage(post.imagePublicId)
+    }
+
+    await post.deleteOne()
+  } catch {
+    return { success: false, error: "Something went wrong. Please try again"}
+  }
+
+  revalidatePath("/")
+  return {success: true}
 }
